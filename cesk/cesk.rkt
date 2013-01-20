@@ -51,7 +51,7 @@
   (u v uninit (box x))
   
   (S ((x h) ...))
-  (h e ((clos n (u ...) x) ...))
+  (h v ((clos n (u ...) x) ...))
   
   (K ε ; push and pop frames as necessary
      (let-one e K)
@@ -74,7 +74,6 @@
    (--> ((loc-clr n) E S K)
         ((stack-ref n E) (stack-set uninit n E) S K)
         "loc-clr")
-   
    (--> ((loc-box n) E S K)
         ((heap-ref (stack-ref n E) S) E S K)
         "loc-box")
@@ -131,15 +130,30 @@
         (e_0 (framepush (push-uninit n E)) S (application e_1 ... K))
         (where n ,(length (term (e_1 ...))))
         (where (n_1 ...) (count-up n))
-        "application"
+        "application")
     (application e e ...)
      (seq e e e ...)
-     (branch e e e)
+   (--> ((branch e_c e_t e_f) E S K)
+        (e_c (framepush E) S (branch e_t e_f K))
+        "branch")
+   (--> (v E S (branch e_t e_f K))
+        (e_t (framepop E) S K)
+        (side-condition (≠ (term v) (term #f)))
+        "branch-cont-true")
+   (--> (#f E S (branch e_t e_f K))
+        (e_f (framepop E) S K)
+        "branch-cont-false")
      (let-rec (l ...) e)
      (indirect x)
-     (proc-const (τ ...) e)
-     (case-lam l ...)
-     l
+   (--> ((proc-const (τ ...) e) E ((x_i h_i) ...) K)
+        ((clos x) E ((x ((clos n () e))) (x_i h_i) ...) K)
+        (fresh x)
+        "proc-const")
+   (--> ((case-lam l ...) E S K)
+   (--> ((lam (τ ...) (n ...) e) E ((x_i h_i) ...) K)
+        ((clos x) E ((x ((clos n (map n stack-ref E) e))) (x_i h_i) ...) K)
+        "lam"
+   ((clos n (u ...) x) ...)
 
 (define procedure-rules
   (reduction-relation
