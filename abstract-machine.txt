@@ -1,7 +1,5 @@
 An abstract Racket virtual machine (not as object-oriented as it sounds)
 
-what does cf. mean?
-
 Racket [cite Racket] (formerly PLT Scheme) is a batteries-included dialect of Scheme [cite Scheme] enhanced with higher-order contracts, modules and units (cf. ML's functors), and [other additions to Scheme]. Racket code is compiled first to bytecode for evaluation by a custom virtual machine, which provides reference behavior for bytecode programs. Bytecode may be transformed into native code by the JIT compiler.
 
 The Racket virtual machine reflects the fact that Racket bytecode is not a sequence of instructions, but a tree of bytecode forms.
@@ -189,8 +187,6 @@ Since the branch is always true, we can remove the guard. This expression should
 Now we know that b is not reachable, so we can get rid of it. Abstract interpretation to do this is possible, if we don't do a collecting interpretation. Instead, the state of the program at a point is the set of reachable states, or something of that nature.
 
 Racket bytecode abstract interpretation
-
-I think there's a problem with the demodularizer. The bytecode parser fails for a simple demodularized program.
 
 static contract verification
 David van Horn
