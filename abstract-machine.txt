@@ -22,6 +22,8 @@ In the process, many of the operations of the Racket virtual machine become meta
 
 By adopting the stack as defined as our environment, we inherit many operational similarities. However, elements in the stack are referenced by offset, which means we must obey the stack discipline of the virtual machine to preserve correct behavior. Fortunately, this only affects the meta-language and does not require us to alter the bytecode language at all.
 
+A traditional stack maps identifiers to variables, possibly allocated on the heap. In contrast, a values stack maps offsets to values or heap references. While these offsets can serve as identifiers within certain contexts, bytecode operations which alter the size of the stack cause a conceptual renaming. We could tailor our specific analysis to account for this to preserve precision, but we instead decompile the code which performs an equivalent analysis and packages up code for us... We need some assurance that the decompiled code has the same semantics as the original source. How could it not, if we're assured that the bytecode does?
+
 
 The first step to interpreting a program abstractly is to obtain a program.
 
