@@ -1,14 +1,19 @@
 #lang racket/base
+(require "init.rkt"
+         "load.rkt"
+         "compile.rkt"
+         "print.rkt"
+         "primitive-maps.rkt")
 
-(require racket/pretty
-         compiler/zo-parse
-         "racket-machine/model-impl.rkt")
+(define p0 '(module test racket/base
+              (add1 1)))
 
-(for ([file (in-vector (current-command-line-arguments))])
-  (with-handlers ([exn:fail? (λ (e)
-                               (printf "failed on ~a~n" file)
-                               (let ([message (exn-message e)])
-                                 (displayln (substring message
-                                                       0
-                                                       (min (string-length message) 256)))))])
-    (pretty-print (impl->model (call-with-input-file file zo-parse)))))
+(define p1 '(module test racket/base
+              (define (add1 x) (+ x 1))
+              (add1 3)))
+
+(define p2 '(module test racket/base
+              (print "hello")))
+
+((compose load init compile)
+ p2)
