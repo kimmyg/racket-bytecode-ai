@@ -3,7 +3,7 @@
          racket/match
          racket/set
          compiler/zo-structs
-         "extensions.rkt"
+         "init-extensions.rkt"
          "cycle-points.rkt"
          (prefix-in text- "map.rkt"))
 
@@ -58,10 +58,10 @@
        e]
       [(mod name srcname self-modidx prefix provides requires body 
             syntax-bodies unexported max-let-depth dummy lang-info 
-            internal-context pre-submodules post-submodules)
+            internal-context flags pre-submodules post-submodules)
        (mod name srcname self-modidx prefix provides requires (map inner body)
             syntax-bodies unexported max-let-depth dummy lang-info 
-            internal-context pre-submodules post-submodules)]
+            internal-context flags pre-submodules post-submodules)]
       [(and e (primval id))
        e]
       [(seq forms)

@@ -1,6 +1,7 @@
 #lang racket/base
 (require (except-in racket/list empty)
-         racket/match)
+         racket/match
+         "zip.rkt")
 
 (provide map
          empty
@@ -10,7 +11,7 @@
          init
          extract)
 
-(struct map (map))
+(struct map (map) #:transparent)
 
 (define empty (map (hasheq)))
 
@@ -24,7 +25,7 @@
                 h
                 (error 'concat "values for ~a were not the same (~a and ~a)\n" addr (hash-ref h addr) value))
             (hash-set h addr value))))
-    (map (map-map m0) (map-map m1)))
+    (map (hash-concat (map-map m0) (map-map m1))))
   (if (empty? ms)
       m0
       (let ([m1 (first ms)]
@@ -42,14 +43,6 @@
          ([k ks]
           [v vs])
          (hash-set h k v))))
-
-(define (unzip a×b-s)
-  (if (empty? a×b-s)
-      (values empty empty)
-      (let-values ([(a×b) (first a×b-s)]
-                   [(as bs) (unzip (rest a×b-s))])
-        (values (cons (car a×b) as)
-                (cons (cdr a×b) bs)))))
 
 (define (extract m)
   (unzip (hash->list (map-map m))))

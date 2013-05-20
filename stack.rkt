@@ -10,10 +10,11 @@
          stack-push-uninit
          stack-push
          stack-pop
+         stack-take
          stack-shift
          stack-reset)
 
-(struct stack (slots height marks))
+(struct stack (slots height marks) #:transparent)
 
 (define empty-stack (stack empty 0 empty))
 
@@ -45,8 +46,13 @@
 (define (stack-ref s n)
   (slots-ref (stack-slots s) n))
 
+(define (stack-take s n)
+  (take (stack-slots s) n))
+
 (define (stack-set s u n)
-  (stack (slots-set (stack-slots s) u n)))
+  (stack (slots-set (stack-slots s) u n)
+         (stack-height s)
+         (stack-marks s)))
 
 (define (stack-set* s . u×n-s)
   (stack
@@ -79,7 +85,7 @@
 
 (define (stack-pop s n)
   (stack (slots-pop (stack-slots s) n)
-         (stack-height s)
+         (sub1 (stack-height s))
          (stack-marks s)))
 
 (define (stack-shift s)
@@ -91,3 +97,15 @@
 (define (stack-reset s)
   (match-let ([(stack s h (cons h′ ms)) s])
     (stack (slots-pop s (- h h′)) h′ ms)))
+
+; rendering
+
+(require racket/class
+         racket/draw)
+
+(provide render-stack)
+
+(define (render-stack s ctx)
+  (for ([u (stack-slots s)]
+        [i (in-naturals)])
+  (send ctx draw-text (format "~a" u) 0 (* i 12))))
